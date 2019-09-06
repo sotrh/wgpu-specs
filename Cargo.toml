@@ -1,0 +1,21 @@
+[package]
+name = "wgpu-specs"
+version = "0.1.0"
+authors = ["Ben Hansen <bhbenjaminhansen@gmail.com>"]
+edition = "2018"
+
+[features]
+default = []
+
+[dependencies]
+cgmath = "0.17.0"
+log = "0.4.8"
+env_logger = "0.6.2"
+glsl-to-spirv = "0.1.7"
+rand = "0.7.0"
+specs = "0.15.0"
+specs-derive = "0.4.0"
+# wgpu = "0.3.0"
+wgpu = { git = "https://github.com/gfx-rs/wgpu-rs" }
+# winit = "0.19.3"
+winit = "0.20.0-alpha3"
