@@ -2,9 +2,11 @@ use winit::{event_loop::EventLoop, window::Window};
 
 mod cube;
 mod triangle;
+mod quad;
 
 pub use cube::*;
 pub use triangle::*;
+pub use quad::*;
 
 pub struct Graphics {
     adapter: wgpu::Adapter,

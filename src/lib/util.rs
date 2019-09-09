@@ -29,6 +29,27 @@ pub fn load_glsl(code: &str, stage: ShaderStage) -> Vec<u32> {
         ShaderStage::Compute => glsl_to_spirv::ShaderType::Compute,
     };
 
-    wgpu::read_spirv(glsl_to_spirv::compile(&code, ty).unwrap()).unwrap()
+    let compiled = glsl_to_spirv::compile(&code, ty).unwrap();
+    wgpu::read_spirv(compiled).unwrap()
+}
+
+pub fn rand(min: f32, max: f32) -> f32 {
+    assert!(min <= max);
+    (max - min) * rand::random::<f32>() + min
+}
+
+pub fn rand_vec2(min: f32, max: f32) -> cgmath::Vector2<f32> {
+    cgmath::Vector2::new(
+        rand(min, max),
+        rand(min, max),
+    )
+}
+
+pub fn rand_vec3(min: f32, max: f32) -> cgmath::Vector3<f32> {
+    cgmath::Vector3::new(
+        rand(min, max),
+        rand(min, max),
+        rand(min, max),
+    )
 }
 

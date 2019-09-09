@@ -6,8 +6,9 @@ extern crate specs_derive;
 mod lib;
 
 use lib::{
-    graphics::{self, CubeRenderer, Graphics, TriangleRenderer},
+    graphics::{self, *},
     camera,
+    util,
 };
 use specs::prelude::*;
 use winit::{
@@ -29,9 +30,27 @@ fn main() {
     );
     info!("aspect_ratio = {}", graphics.aspect_ratio());
     let mut cube_renderer = CubeRenderer::new(&mut graphics, &camera);
-    // use cgmath::SquareMatrix;
-    // cube_renderer.update_matrix(&mut graphics, &cgmath::Matrix4::identity());
     let triangle_renderer = TriangleRenderer::new(&graphics);
+    let mut quad_renderer = QuadRenderer::new(&mut graphics, 100);
+
+    let instances = (0..10).map(|_| {
+        Instance {
+            // offset: util::rand_vec2(-1.0, 1.0).into(),
+            offset: [0.5, 0.5],
+            origin: [0.0, 0.0],
+            scale: [0.1, 0.1],
+            // scale: util::rand_vec2(0.01, 0.02).into(),
+            // color: util::rand_vec3(0.0, 1.0).into(),
+            color: [0.1, 0.2, 0.3],
+            // _padding: 0,
+        }
+    }).collect::<Vec<_>>();
+    for instance in instances.iter() {
+        println!("{:?}", instance);
+    }
+    println!("quad_renderer = {:?}", quad_renderer);
+    quad_renderer.update(&mut graphics, &instances);
+    println!("quad_renderer = {:?}", quad_renderer);
 
     // let mut world = World::new();
     // let mut render_dispatcher = DispatcherBuilder::new()
@@ -90,7 +109,8 @@ fn main() {
                         depth_stencil_attachment: None,
                     });
                     // triangle_renderer.draw(&mut rpass);
-                    cube_renderer.draw(&mut rpass);
+                    // cube_renderer.draw(&mut rpass);
+                    quad_renderer.draw(&mut rpass);
                 }
                 graphics.device.get_queue().submit(&[encoder.finish()]);
             }

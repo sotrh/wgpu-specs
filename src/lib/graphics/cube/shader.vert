@@ -8,12 +8,6 @@ layout(set = 0, binding = 0) uniform Locals {
     mat4 u_Transform;
 };
 
-const vec2 positions[3] = vec2[3](
-    vec2(0.0, -0.5),
-    vec2(0.5, 0.5),
-    vec2(-0.5, 0.5)
-);
-
 void main() {
     v_TexCoord = a_TexCoord;
     gl_Position = u_Transform * a_Pos;
