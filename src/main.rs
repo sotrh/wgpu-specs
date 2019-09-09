@@ -29,8 +29,8 @@ fn main() {
         (0.0, 0.0, 0.0).into(),
     );
     info!("aspect_ratio = {}", graphics.aspect_ratio());
-    let mut cube_renderer = CubeRenderer::new(&mut graphics, &camera);
-    let triangle_renderer = TriangleRenderer::new(&graphics);
+    // let mut cube_renderer = CubeRenderer::new(&mut graphics, &camera);
+    // let triangle_renderer = TriangleRenderer::new(&graphics);
     let mut quad_renderer = QuadRenderer::new(&mut graphics, 100);
 
     let instances = (0..10).map(|_| {
@@ -42,15 +42,12 @@ fn main() {
             // scale: util::rand_vec2(0.01, 0.02).into(),
             // color: util::rand_vec3(0.0, 1.0).into(),
             color: [0.1, 0.2, 0.3],
-            // _padding: 0,
         }
     }).collect::<Vec<_>>();
     for instance in instances.iter() {
         println!("{:?}", instance);
     }
-    println!("quad_renderer = {:?}", quad_renderer);
     quad_renderer.update(&mut graphics, &instances);
-    println!("quad_renderer = {:?}", quad_renderer);
 
     // let mut world = World::new();
     // let mut render_dispatcher = DispatcherBuilder::new()
@@ -70,7 +67,7 @@ fn main() {
             } => {
                 graphics.resize(size);
                 camera.aspect_ratio = graphics.aspect_ratio();
-                cube_renderer.update_matrix(&mut graphics, &camera.generate_matrix());
+                // cube_renderer.update_matrix(&mut graphics, &camera.generate_matrix());
                 // use cgmath::SquareMatrix;
                 // cube_renderer.update_matrix(&mut graphics, &cgmath::Matrix4::identity())
             }

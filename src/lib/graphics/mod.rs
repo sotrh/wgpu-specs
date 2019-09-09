@@ -22,37 +22,44 @@ pub struct Graphics {
 impl Graphics {
     pub fn windowed<T: 'static>(title: &str, event_loop: &EventLoop<T>) -> (Self, Window) {
         // todo: add gl support
-        #[cfg(not(feature = "gl"))]
-        let (window, hidpi_factor, size, surface) = {
+        // #[cfg(not(feature = "gl"))]
+        let (window, hidpi_factor, size, instance, surface) = {
             let window = winit::window::Window::new(event_loop).unwrap();
             window.set_title(title);
             let hidpi_factor = window.hidpi_factor();
             let size = window.inner_size().to_physical(hidpi_factor);
-            let surface = wgpu::Surface::create(&window);
-            (window, hidpi_factor, size, surface)
+            let instance = wgpu::Instance::new();
+            
+            use raw_window_handle::HasRawWindowHandle as _;
+            let surface = instance.create_surface(window.raw_window_handle());
+            // let surface = wgpu::Surface::create(&window);
+            (window, hidpi_factor, size, instance, surface)
         };
 
-        #[cfg(feature = "gl")]
-        let (window, instance, hidpi_factor, size, surface) = {
-            let wb = winit::window::WindowBuilder::new();
-            let cb = wgn::glutin::ContextBuilder::new().with_vsync(true);
-            let context = cb.build_windowed(wb, &event_loop).unwrap();
-            context.window().set_title(title);
+        // #[cfg(feature = "gl")]
+        // let (window, instance, hidpi_factor, size, surface) = {
+        //     let wb = winit::window::WindowBuilder::new();
+        //     let cb = wgn::glutin::ContextBuilder::new().with_vsync(true);
+        //     let context = cb.build_windowed(wb, &event_loop).unwrap();
+        //     context.window().set_title(title);
 
-            let hidpi_factor = context.window().hidpi_factor();
-            let size = context.window().get_inner_size().unwrap().to_physical(hidpi_factor);
+        //     let hidpi_factor = context.window().hidpi_factor();
+        //     let size = context.window().get_inner_size().unwrap().to_physical(hidpi_factor);
 
-            let (context, window) = unsafe { context.make_current().unwrap().split() };
-            let instance = wgpu::Instance::new(context);
-            let surface = instance.get_surface();
+        //     let (context, window) = unsafe { context.make_current().unwrap().split() };
+        //     let instance = wgpu::Instance::new(context);
+        //     let surface = instance.get_surface();
 
-            (window, instance, hidpi_factor, size, surface)
-        };
+        //     (window, instance, hidpi_factor, size, surface)
+        // };
 
-        let adapter = wgpu::Adapter::request(&wgpu::RequestAdapterOptions {
+        // let adapter = wgpu::Adapter::request(&wgpu::RequestAdapterOptions {
+        //     power_preference: wgpu::PowerPreference::LowPower,
+        //     backends: wgpu::BackendBit::PRIMARY,
+        // }).unwrap();
+        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
             power_preference: wgpu::PowerPreference::LowPower,
-            backends: wgpu::BackendBit::PRIMARY,
-        }).unwrap();
+        });
 
         let device = adapter.request_device(&wgpu::DeviceDescriptor {
             extensions: wgpu::Extensions {
