@@ -17,9 +17,5 @@ layout(location = 1) out vec3 v_color;
 void main() {
     v_tex_coord = a_tex_coord;
     v_color = a_color;
-    // vec2 v_pos = vec2(a_pos.x * a_scale.x, a_pos.y * a_scale.y);
-    vec2 v_pos = a_pos;
-    // v_pos -= a_origin * a_scale;
-    v_pos += a_offset;
-    gl_Position = vec4(v_pos, 0, 1);
+    gl_Position = vec4((a_pos - a_origin) * a_scale + a_offset, 0, 1);
 }
