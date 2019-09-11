@@ -33,6 +33,10 @@ pub fn load_glsl(code: &str, stage: ShaderStage) -> Vec<u32> {
     wgpu::read_spirv(compiled).unwrap()
 }
 
+pub fn angle_to_vec2(angle: f32) -> cgmath::Vector2<f32> {
+    (angle.cos(), angle.sin()).into()
+}
+
 pub fn rand(min: f32, max: f32) -> f32 {
     assert!(min <= max);
     (max - min) * rand::random::<f32>() + min

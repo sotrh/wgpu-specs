@@ -51,7 +51,7 @@ impl QuadRenderer {
                 usage: wgpu::BufferUsage::VERTEX | wgpu::BufferUsage::COPY_DST,
             });
         let ib_desc = wgpu::VertexBufferDescriptor {
-            stride: vertex_size as wgpu::BufferAddress,
+            stride: instance_size as wgpu::BufferAddress,
             step_mode: wgpu::InputStepMode::Instance,
             attributes: &[
                 wgpu::VertexAttributeDescriptor {
@@ -61,18 +61,23 @@ impl QuadRenderer {
                 },
                 wgpu::VertexAttributeDescriptor {
                     format: wgpu::VertexFormat::Float2,
-                    offset: 2 * mem::size_of::<f32>() as u64,
+                    offset: mem::size_of::<cgmath::Vector2<f32>>() as u64,
                     shader_location: 3,
                 },
                 wgpu::VertexAttributeDescriptor {
                     format: wgpu::VertexFormat::Float2,
-                    offset: 4 * mem::size_of::<f32>() as u64,
+                    offset: 2 * mem::size_of::<cgmath::Vector2<f32>>() as u64,
                     shader_location: 4,
                 },
                 wgpu::VertexAttributeDescriptor {
-                    format: wgpu::VertexFormat::Float3,
-                    offset: 6 * mem::size_of::<f32>() as u64,
+                    format: wgpu::VertexFormat::Float,
+                    offset: 3 * mem::size_of::<cgmath::Vector2<f32>>() as u64,
                     shader_location: 5,
+                },
+                wgpu::VertexAttributeDescriptor {
+                    format: wgpu::VertexFormat::Float3,
+                    offset: (3 * mem::size_of::<cgmath::Vector2<f32>>() + mem::size_of::<f32>()) as u64,
+                    shader_location: 6,
                 },
             ],
         };
@@ -252,13 +257,11 @@ impl QuadRenderer {
     pub fn update(&mut self, graphics: &mut graphics::Graphics, instances: &[Instance]) {
         use std::cmp::min;
         let instances = &instances[0..min(self.max_instances, instances.len())];
-        let num_instances = instances.len();
-        println!("num_instances = {}", num_instances);
-        if num_instances > 0 {
-            self.instance_count = num_instances;
-            let buffer_size = (num_instances * std::mem::size_of::<Instance>()) as u64;
+        if instances.len() > 0 {
+            self.instance_count = instances.len();
+            let buffer_size = (instances.len() * std::mem::size_of::<Instance>()) as u64;
             let temp_buffer = graphics.device
-                .create_buffer_mapped(num_instances, wgpu::BufferUsage::COPY_SRC)
+                .create_buffer_mapped(instances.len(), wgpu::BufferUsage::COPY_SRC)
                 .fill_from_slice(instances);
 
             let mut encoder = graphics.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { todo: 0 });
@@ -286,10 +289,11 @@ struct GlobalUniforms {
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct Instance {
-    pub offset: [f32; 2],
-    pub origin: [f32; 2],
-    pub scale: [f32; 2],
-    pub color: [f32; 3],
+    pub offset: cgmath::Vector2<f32>,
+    pub origin: cgmath::Vector2<f32>,
+    pub scale: cgmath::Vector2<f32>,
+    pub rotation: f32,
+    pub color: cgmath::Vector3<f32>,
 }
 
 #[derive(Clone, Copy)]
